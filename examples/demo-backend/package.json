@@ -1,0 +1,17 @@
+{
+  "name": "demo-backend",
+  "version": "1.0.0",
+  "description": "Demo backend used in all the examples",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Elze Kool <efrkool@live.nl>",
+  "license": "CC-BY-NC-SA-4.0",
+  "dependencies": {
+    "express": "^4.16.3",
+    "sqlite3": "^4.0.1",
+    "swagger-ui-express": "^3.0.10",
+    "yamljs": "^0.3.0"
+  }
+}

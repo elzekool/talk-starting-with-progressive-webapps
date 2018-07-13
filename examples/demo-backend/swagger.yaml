@@ -1,0 +1,164 @@
+swagger: "2.0"
+
+info:
+  description: "This is the demonstration backend for the talk \"Starting with Progressive Web Apps\"."
+  version: "1.0.0"
+  title: "Example backend for PWA Talk"
+
+host: "localhost:5000"
+basePath: "/"
+
+tags:
+- name: "generic"
+  description: "Generic calls"
+
+- name: "todo"
+  description: "All calls related to Todo's"
+
+paths:
+  /:
+    get:
+      tags:
+        - "generic"
+      summary: "Test API"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+             $ref: "#/definitions/ResponseMessage"
+  /todos:
+    get:
+      tags:
+        - "todo"
+      summary: "Get all Todo's"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/TodoWithId"
+
+  /todo/{id}:
+    get:
+      tags:
+        - "todo"
+      summary: "Retrieve Todo by ID"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID to retrieve"
+          required: true
+          type: "integer"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/TodoWithId"
+        404:
+          description: "not found"
+          schema:
+            $ref: "#/definitions/ResponseMessage"
+    delete:
+      tags:
+        - "todo"
+      summary: "Delete Todo by ID"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID to delete"
+          required: true
+          type: "integer"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/ResponseMessage"
+        404:
+          description: "not found"
+          schema:
+            $ref: "#/definitions/ResponseMessage"
+
+    post:
+      tags:
+        - "todo"
+      summary: "Update Todo by ID"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID to update"
+          required: true
+          type: "integer"
+        - name: "body"
+          in: "body"
+          description: "Todo"
+          required: true
+          schema:
+            $ref: "#/definitions/Todo"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/TodoWithId"
+        404:
+          description: "not found"
+          schema:
+            $ref: "#/definitions/ResponseMessage"
+
+  /todo:
+    post:
+      tags:
+        - "todo"
+      summary: "Create Todo"
+      parameters:
+        - name: "body"
+          in: "body"
+          description: "Todo"
+          required: true
+          schema:
+            $ref: "#/definitions/Todo"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/TodoWithId"
+
+
+definitions:
+  ResponseMessage:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+        description: "Todo Text"
+
+  Todo:
+    type: "object"
+    properties:
+      done:
+        type: "boolean"
+        description: "Is Todo done"
+      text:
+        type: "string"
+        description: "Todo Text"
+
+  TodoWithId:
+    allOf:
+      - type: "object"
+        properties:
+          id:
+            type: "integer"
+            description: "Unique Todo ID"
+      - $ref: "#/definitions/Todo"
