@@ -11,6 +11,7 @@
 'use strict';
 
 const express = require('express');
+const cors = require('cors');
 const sqlite3 = require('sqlite3').verbose();
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
@@ -18,6 +19,8 @@ const todoModule = require('./modules/todo');
 
 // Initialize Express APP
 const app = express();
+
+app.use(cors());
 app.use(express.json());
 
 // Add swagger
