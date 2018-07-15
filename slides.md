@@ -75,7 +75,7 @@ visit your site again.
 
 A Service Worker is a special kind of **Web Worker** that in the background has two tasks:
 
-* Network proxy (this is what allows offline usage)
+* Network proxy (this is what allows offline usage). Better then AppCache as it is completely controlled by you.
 * Entry point for push notifications
 
 The Service Work spec is still in draft. If you have trouble sleeping, you can the last draft on https://w3c.github.io/ServiceWorker/.
@@ -128,18 +128,80 @@ There is also `Promise.finally()` (analog to finally in try..catch), `Promise.re
 `Promise.race()` / `Promise.all()` to wait for the first/all promises to resolve/reject.
 
 ---
-# Web Worker
+# Web Worker (1/2)
+
+Web Workers are scripts that are run in the background, detached from the UI or DOM. They are meant to allow scripts
+to do long tasks without blocking, basically running multi-threaded.
+
+Registration:
+```javascript
+const myWorker = new Worker('worker.js');
+```
+
+Due to the fact web workers run in a different thread you cannot access data directly you need the send/receive messages
+with data. They also don't have access to the DOM.
+
+Sending and receiving messages to/from the Web Worker (from UI):
+```javascript
+myWorker.postMessage([ 2, 5 ]);
+
+myWorker.onmessage = (e) => {
+  console.log('Message received from worker:', e.data);
+}
+```
+
+
+
+---
+# Web Worker (1/2)
+
+
+Sending and receiving messages to/from the UI (from Web Worker):
+```javascript
+onmessage = (e) => {
+  console.log('Message received from main script');
+  const workerResult = `Result: ${(e.data[0] * e.data[1])}`;
+  console.log('Posting message back to main script');
+  postMessage(workerResult);
+}
+```
+
+You can use `onmessage` in the Web Worker as this is defined in the global scope. Just like with the `window` object
+in regular scripts. The global scope is also available as `self`.
+
+.width-65[![Debugging Web Workers](images/webworker-debug.png)]
+
+---
+# Service Worker lifecycle
+
+.width-50[![Service Worker Lifecycle](images/sw-lifecycle.png)]
+---
+# Design strategies
+
+* TODO: App skeleton
+* TODO: Expired, Stale data
+* TODO: Local storage methods: LocalStorage, SessionStorage, IndexedDB -> Permanent
+
 
 ---
 # Common pitfalls
 
 The world is not always a happy place. Things go wrong, this are some things that can bite you:
 
+* Caching of Service Worker
+
 * You can have multiple versions of your site running
 
 * The browser that is used when your site/app is used from the home screen/app drawer is not the same as the normal browser
 
 * Search engines cannot always render the frontend correctly using javascript
+
+---
+# Issue: Caching of Service Worker
+
+* TODO: No cache buster possible (always same URL)
+* TODO: ETag, Cache-Control
+* TODO: Varnish
 
 ---
 # Issue: Old client version
@@ -173,3 +235,7 @@ this may cause Safari to switch your app to the regular browser with that storag
 ---
 # Issue: Javascript rendering + SEO
 
+* TODO: Mixed results between search engines
+* TODO: If used, don't do async calls
+* TODO: No headers (no way to say 404, 403, etc..)
+* TODO: Solution isomorphic app

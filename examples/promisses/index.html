@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Promisses Demo</title>
+</head>
+<body>
+    Look in the console!
+    <script>
+        (function() {
+            var promise = new Promise(function(resolve, reject) {
+                setTimeout(() => { resolve('I am resolved!'); }, 200);
+            });
+
+            promise
+                .then(function (result) { return 'I received: ' + result; })
+                .then(function (result) { console.log(result); })
+                .catch(function (reason) { console.log(reason.message); });
+        })();
+    </script>
+</body>
+</html>

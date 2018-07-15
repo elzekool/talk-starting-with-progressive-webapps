@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebWorker Demo</title>
+</head>
+<body>
+    Look in the console!
+    <script>
+        (function() {
+            var myWorker = new Worker('worker.js');
+
+            myWorker.postMessage([2, 5]);
+            myWorker.onmessage = (e) => {
+                console.log('Message received from worker:', e.data);
+            }
+        })();
+    </script>
+</body>
+</html>
