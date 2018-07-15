@@ -15,7 +15,7 @@ import {Provider} from 'react-redux';
 import storeFactory from '../shared/state/storeFactory';
 import App from "../shared/components/layout/App";
 
-import template from "../../build/index.html";
+import template from "../../build/static/index.html";
 import {clearPromiseQueue, getPromiseQueue} from "../shared/state/async";
 
 export default function renderer(req, res) {

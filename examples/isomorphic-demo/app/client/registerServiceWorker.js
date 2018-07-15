@@ -12,7 +12,7 @@ export default function register() {
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             if (process.env.NODE_ENV === 'production') {
-                const swUrl = `static/service-worker.js`;
+                const swUrl = `service-worker.js`;
                 registerValidSW(swUrl);
             } else {
                 unregisterSW();

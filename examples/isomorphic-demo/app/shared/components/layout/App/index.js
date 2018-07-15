@@ -20,15 +20,11 @@ const App = () => {
     return (
         <div>
             <Header/>
-            <div className="container d-flex justify-content-between pt-4 pb-4">
+            <div className="container pt-4 pb-4">
                 <Switch>
                     <Route path="/" exact component={Home} />
                     <Route path="/todo/:id" render={({match}) => { return (<Todo id={match.params.id}/> )}} />
-                    <Route path='*' exact={true} render={({ staticContext }) => {
-                        if (staticContext !== void 0) {
-                            staticContext.resultCode = 404;
-                        }
-                        return (<NotFound /> )}} />
+                    <Route path='*' exact={true} component={NotFound} />
                 </Switch>
             </div>
         </div>

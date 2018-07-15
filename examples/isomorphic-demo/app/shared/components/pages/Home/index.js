@@ -8,7 +8,10 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import {connect} from "react-redux";
 
+import TemporaryNotAvailable from "../TemporaryNotAvailable";
+
 import reactLogo from './react-logo-text-icon.png';
+
 import {fetchTodos} from "../../../state/actions/todo";
 
 class Home extends Component {
@@ -26,6 +29,12 @@ class Home extends Component {
     }
 
     render() {
+
+        // We cannot fetch the data from the backend
+        if (this.props.todo.hasError) {
+            return (<TemporaryNotAvailable reloadTrigger={this.props.fetchTodos} />);
+        }
+
         return (
             <div>
                 <h2>This is your list of items to do:</h2>
@@ -37,13 +46,6 @@ class Home extends Component {
                 {this.props.todo.isFetching && (
                     <div className="alert info">
                         We are loading your todo list
-                    </div>
-                )}
-
-                {this.props.todo.hasError && (
-                    <div className="alert alert-danger">
-                        <div>We could not load your todo list from our backend.</div>
-                        <button onClick={this.props.fetchTodos} className="btn btn-danger btn-sm">Try again</button>
                     </div>
                 )}
 

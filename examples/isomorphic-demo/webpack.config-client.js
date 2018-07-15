@@ -30,7 +30,7 @@ module.exports = {
     // chunkhash to allow optimal browser caching.
     output: {
         path: path.join(__dirname, 'build'),
-        filename: 'static/bundle.[chunkhash].js'
+        filename: 'generated/bundle.[chunkhash].js'
     },
 
     optimization: isProduction
@@ -68,7 +68,7 @@ module.exports = {
                         loader: 'url-loader',
                         options: {
                             limit: 8*1024,
-                            name: 'static/media/[name].[hash:8].[ext]',
+                            name: 'generated/media/[name].[hash:8].[ext]',
                         },
                     },
 
@@ -92,7 +92,7 @@ module.exports = {
     plugins: [
         // Create the combined CSS bundle file
         new MiniCssExtractPlugin({
-            filename: 'static/css.bundle.[hash].css'
+            filename: 'generated/css.bundle.[hash].css'
         }),
 
         // Because we are using chunkhash in our bundle name a new file is generated
@@ -107,14 +107,17 @@ module.exports = {
         new SWPrecacheWebpackPlugin({
             filename: 'static/service-worker.js',
             minify: false,
+            stripPrefixMulti: {
+                [path.join(__dirname, './build/static/')]: ''
+            },
             staticFileGlobsIgnorePatterns: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/]
         }),
 
         // The generated bundles use chunkhash. This way we don't know the filenames in advance
         // use HtmlWebpackPlugin to inject them into our template file.
         new HtmlWebpackPlugin({
-            template: './app/client/index.html',
-            filename: 'index.html',
+            template: './app/client/static/index.html',
+            filename: 'static/index.html',
             inject: 'body',
         }),
     ],
@@ -122,7 +125,8 @@ module.exports = {
     devServer: {
         clientLogLevel: 'none',
         compress: true,
-        historyApiFallback: true
+        historyApiFallback: true,
+        contentBase: path.join(__dirname, 'app/client/static'),
     }
 
 };

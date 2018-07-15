@@ -17,7 +17,7 @@ export default () => {
                              className="mr-2">
                             <path d="M22.413 18.855l-7.413-12.352v-5.003h0.75c0.413 0 0.75-0.337 0.75-0.75s-0.337-0.75-0.75-0.75h-7.5c-0.413 0-0.75 0.338-0.75 0.75s0.337 0.75 0.75 0.75h0.75v5.003l-7.413 12.352c-1.698 2.83-0.387 5.145 2.913 5.145h15c3.3 0 4.611-2.315 2.913-5.145zM5.649 15l4.851-8.084v-5.416h3v5.416l4.851 8.084h-12.701z"></path>
                         </svg>
-                        <strong>Demonstration of Isomorphic SPA app</strong>
+                        <strong>Isomorphic SPA app</strong>
                     </a>
                 </div>
             </div>

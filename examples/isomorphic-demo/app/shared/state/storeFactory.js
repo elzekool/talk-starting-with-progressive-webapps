@@ -37,10 +37,12 @@ export default () => {
             ].filter(middleware => (middleware !== null)))
         );
 
-        store.dispatch({
-            type: INITIALIZE_FROM_STATE,
-            state: window.__INITIAL_STATE__
-        });
+        if (typeof window.__INITIAL_STATE__ !== 'undefined') {
+            store.dispatch({
+                type: INITIALIZE_FROM_STATE,
+                state: window.__INITIAL_STATE__
+            });
+        }
 
         return store;
 

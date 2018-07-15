@@ -9,12 +9,16 @@
 
 import path from 'path';
 import express from 'express';
+
 import renderer from './renderer';
 
 const app = express();
-const assets = express.static(path.join(__dirname, './static'));
 
-app.use('/static', assets);
+app.use('/generated', express.static(path.join(__dirname, './generated')));
+app.use(express.static(path.join(__dirname, './static'), {
+    index: false
+}));
+
 app.get('*', renderer);
 
 export default app;
