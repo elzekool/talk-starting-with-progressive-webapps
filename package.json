@@ -1,0 +1,15 @@
+{
+  "name": "talk-starting-with-progressive-webapps",
+  "version": "1.0.0",
+  "description": "Server for talk Starting with Progressive Web Apps",
+  "main": "server.js",
+  "repository": "git@github.com:elzekool/talk-starting-with-progressive-webapps.git",
+  "author": "Elze Kool <efrkool@live.nl>",
+  "license": "CC-BY-NC-SA-4.0",
+  "private": true,
+  "dependencies": {
+    "express": "^4.16.3",
+    "morgan": "^1.9.0",
+    "path": "^0.12.7"
+  }
+}

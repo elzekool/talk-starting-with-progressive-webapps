@@ -20,5 +20,10 @@ Presentation slides for my presentation about Progressive Web Apps.
 <small>Device/browser specific issues, SEO, Server side rendering</small>
 
 ## Run the presentation
-Just use `./run.sh` and it will start a docker container. You can than access the slides trough http://localhost:5040
+Using Docker:
+Just use `./run.sh` and it will start a docker container.
 
+Using NodeJS:
+Run `yarn install` or `npm install` to install dependencies. Then use `node server.js` to start the server.
+
+In both cases you can access the slides trough http://localhost:5040
