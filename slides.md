@@ -16,28 +16,63 @@ class: center, middle, titlescreen
 * Has code samples to make everything clear
 
 ---
+# Before we begin
+
+### Slides
+
+* I use a lot of text in my slides. I do this so that you can later read back the important things I mentioned
+
+### Code examples
+* I have made some examples, some I will discuss during the talk, you can find all of them in the `examples`folder.
+* I use ES6 in my code samples. Most important to remember: `const` and `let` are the same as `var`. Only `const` 
+doesn't allow assigning a new value. Also `(a,b) => a*b` and `(a,b) => { return a*b; }` is the same as `function(a,b) { return a*b; }` 
+
+---
 # Structure of the talk
 
-* **Definition of Progressive Web App**<br/>
+#### **Definition of Progressive Web App**
 <small>When is your site a Progressive Web App? What advantages are there and when will you use PWA? And how can you test compatibility?</small>
 
-* **Server workers, offline usability and push notifications**<br/>
+#### **Server workers, offline usability and push notifications**
 <small>What are service workers and how do they relate to offline access and push notifications?</small>
 
-* **Building your first app with React**<br/>
+#### **Building your first app with React**
 <small>Build your first Progressive Web App with React. Rendering, routing and more.</small>
 
-* **Handling state with Redux**<br/>
+#### **Handling state with Redux**
 <small>Organize changes in state with Redux and how to correctly implement async changes.</small>
 
-* **Common pitfalls**<br/>
+#### **Common pitfalls**
 <small>Device/browser specific issues, SEO, Server side rendering</small>
+
+---
+# Progressive Web App, intro
+
+Independent designer `Frances Berriman` and Google engineer `Alex Russell` invented the therm in `2015`. 
+The term describes sites/app that take advantage of modern web techniques. So in short it is not a specific technique
+but a set of characteristics that define the progessive web app. 
+
+Frances Berriman & Alex Russell:
+
+.width-25[![Frances Berriman](images/frances-berriman.jpeg)] .width-25[![Alex Russell](images/alex-russell.jpeg)]  
+
+---
+# Progressive Web App
+
+Characteristics of a Progressive Web App are:
+    
+* Work on **every browser** and on **every device**. Use progessive enhancements.
+* Work **offline** or on low quality networks
+* **Feel like an app** to the user with app-style interactions and navigation.
+* Uses **HTTPS** to prevent snooping and ensure content hasn’t been tampered with.
+* Are **discoverable** by providing a W3C manifest.
+* Make re-engagement easy through features like **push notifications** and **installation on their homescreen**.
+* Can be **linked** to, and don't require installation.
 
 ---
 # Progressive Web App checklist
 
-In short **Progessive Web App is not more than a set of rules**. If you pass this checklist
-you can call your app/site a Progessive Web App. It says a lot of what, very little about how.
+From the characteristics a set of rules where created. The most important are: 
 
 * Site is served over HTTPS
 * Pages are responsive on tablets & mobile devices
@@ -46,9 +81,10 @@ you can call your app/site a Progessive Web App. It says a lot of what, very lit
 * **First load fast even on 3G**
 * Site works cross-browser
 * **Page transitions don't feel like they block on the network**
-* Each page has a URL
+* **Each page has a URL**
 
-Most are boring, some are **exiting**.
+I will focus on the **highlighted** items in this talk
+
 
 ---
 # Lighthouse Audit
@@ -61,14 +97,35 @@ of them is the Progressive Web App checklist:
 ---
 # Why should you care?
 
-**Responsiveness**: Multiple items in the checklist are there to improve the user experience for your site. When
+#### **Responsiveness**
+Multiple items in the checklist are there to improve the user experience for your site. When
 the user visits your site it is important that the user can interact with your site as soon as possible.
 
-**Offline/limited usage**: In a realistic world you don't always have good internet. So your site users have the same.
+#### **Offline/limited usage**
+In a realistic world you don't always have good internet. So your site users have the same.
 Ever had the experience of no internet when you had to show your ticket?
 
-**Engagement** By allowing your site to be added to the home screen and/or app drawer your visitor is more likely to
+#### **Engagement**
+By allowing your site to be added to the home screen and/or app drawer your visitor is more likely to
 visit your site again.
+
+
+---
+# Out of scope for this talk
+
+#### **Serving pages trough HTTPS**
+Ask your hosting provider for more assistance. If you host yourself, you can try
+using Let's Encrypt, it has a tool to auto create/add certificates for free. Caddy is a server that includes Let's Encrypt
+out of the box. A lot of techniques used in this talk work only on HTTPS (and localhost).
+
+#### **Pages are responsive on tablets & mobile devices**
+Use a correct `viewport` and implement media queries. A good starting point is using a CSS framework
+like `Bootstrap`, `Foundation`, `UIKit` (and many others...)
+
+#### **Site works cross-browser**
+Test your site in different browsers. Use sites like `Browerstack` or `Saucelabs` to test in browsers
+you don't have installed locally. You can use [http://browserl.ist/?defaults](http://browserl.ist/?defaults) to see a list of modern
+browsers you should support.
 
 ---
 # Service Worker
@@ -178,7 +235,7 @@ in regular scripts. The global scope is also available as `self`.
 ---
 # Design strategies
 
-* TODO: App skeleton
+* TODO: App shell
 * TODO: Expired, Stale data
 * TODO: Local storage methods: LocalStorage, SessionStorage, IndexedDB -> Permanent
 
