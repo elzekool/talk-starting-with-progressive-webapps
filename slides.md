@@ -231,7 +231,51 @@ in regular scripts. The global scope is also available as `self`.
 ---
 # Service Worker lifecycle
 
-.width-50[![Service Worker Lifecycle](images/sw-lifecycle.png)]
+Registration of a service worker is just like creating a Web Worker:
+```javascript
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js');
+}
+```
+
+.width-45-r[![Service Worker Lifecycle](images/sw-lifecycle.png)]
+
+On initial registration the first event is `installing`. This allows the Service Worker to do some initialization.
+
+After initialization and next page load the service worker is `activated`. 
+
+This means it `fetch` events on network requests in `scope`. 
+
+---
+# Service Worker initialization
+
+This is very simple example of a Service Worker script. I uses the `On install` approach (for example to install the
+`App Shell`) 
+
+``` javascript
+const preCacheList = [ 'index.html', 'script.js', 'bootstrap.min.css' ];
+const cacheIdentifier = 'awesome-app-v1';
+
+self.addEventListener('install', (event) => {
+    console.log('Service Worker installing...');
+    event.waitUntil(
+        caches.open(cacheIdentifier).then(cache => cache.addAll(preCacheList))
+    );
+});
+
+self.addEventListener('activate', (event) => {
+    console.log('Service Worker activated!');
+});
+
+self.addEventListener('fetch', => (event) => {
+    var url = new URL(event.request.url);
+    if (url.origin === location.origin && preCacheList.indexOf(url.pathname) !== -1) {
+        event.respondWith(caches.match(url.pathname));
+    }
+});
+```
+
+
 ---
 # Design strategies
 
