@@ -207,8 +207,6 @@ myWorker.onmessage = (e) => {
 }
 ```
 
-
-
 ---
 # Web Worker (1/2)
 
@@ -229,6 +227,23 @@ in regular scripts. The global scope is also available as `self`.
 .width-65[![Debugging Web Workers](images/webworker-debug.png)]
 
 ---
+# CacheStorage API
+
+The CacheStorage API is specifically meant for caching web assets. It's exposed in the `caches` object in the
+global scope. `CacheStorage`allows creating multiple `Cache` instances. Each `Cache` can hold multiple items which are identified by their URL.
+All functions return a `Promise`. 
+
+Most important `CacheStorage` functions are:
+* `CacheStorage.open(key)` creates/opens a `Cache` with given key. `CacheStorage.match(url)` looks in all `Cache` 
+objects that match given URL. (Also available: `CacheStorage.keys()` and `CacheStorage.delete()`)
+
+Most important `Cache` functions are:
+* `Cache.add(url)/Cache.addAll([urls])` Takes an (array of) URLs, fetches and caches them. If you need the response you
+need to fetch them yourself and use `Cache.put(url/request, response)` to save it to the cache. 
+(Also available: `Cache.match(url)`, `Cache.delete(url/request)`, `Cache.keys()`)   
+   
+
+---
 # Service Worker lifecycle
 
 Registration of a service worker is just like creating a Web Worker:
@@ -244,7 +259,7 @@ On initial registration the first event is `installing`. This allows the Service
 
 After initialization and next page load the service worker is `activated`. 
 
-This means it `fetch` events on network requests in `scope`. 
+This means it receives `fetch` events on network requests in `scope`. 
 
 ---
 # Service Worker initialization
@@ -269,11 +284,24 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', => (event) => {
     var url = new URL(event.request.url);
-    if (url.origin === location.origin && preCacheList.indexOf(url.pathname) !== -1) {
+    if (
+        url.origin === location.origin && 
+        preCacheList.indexOf(url.pathname) !== -1
+    ) {
         event.respondWith(caches.match(url.pathname));
     }
 });
 ```
+
+---
+# Service Worker usage
+
+You are completely free in your choice how and what you cache. Shown was `on install`. But other common options are
+`cache with network fallback`, `network with cache fallback` and `cache with background fetch`. 
+
+You can control the cache from both the UI and from the Service Worker so you can tailor you caching strategies to
+your needs. Also a common used technique are fallback images when offline. 
+
 
 
 ---
