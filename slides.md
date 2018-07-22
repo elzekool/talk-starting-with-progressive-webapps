@@ -302,7 +302,26 @@ You are completely free in your choice how and what you cache. Shown was `on ins
 You can control the cache from both the UI and from the Service Worker so you can tailor you caching strategies to
 your needs. Also a common used technique are fallback images when offline. 
 
+* TODO: Improve!
 
+---
+# Push Notifications, intro
+
+Push notifications are the notifications you get when something important happens. They can be annoying but when used
+correctly they can greatly improve the engagement of the user with your site/app.
+
+The `Push API` was created to consolidate all the different previous implementations. It is supported by all major browsers except Safari/iOS. This
+means in the Netherlands the reach is about 60% and worldwide about 75%. The Apple API is outside the scope of this talk as it
+not part of the PWA specs.
+
+.width-100[![Can I use Push API](images/can-i-use-push-api.png)]
+
+---
+# Push Notifications, workflow
+
+Below a typical flow of functions/events is shown for the Push Notification functionality:
+
+.width-100[![Push API flow](images/push-flow.png)]
 
 ---
 # Design strategies
