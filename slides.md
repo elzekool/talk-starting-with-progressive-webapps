@@ -128,20 +128,6 @@ you don't have installed locally. You can use [http://browserl.ist/?defaults](ht
 browsers you should support.
 
 ---
-# Service Worker
-
-A Service Worker is a special kind of **Web Worker** that in the background has two tasks:
-
-* Network proxy (this is what allows offline usage). Better then AppCache as it is completely controlled by you.
-* Entry point for push notifications
-
-The Service Work spec is still in draft. If you have trouble sleeping, you can the last draft on https://w3c.github.io/ServiceWorker/.
-But the standard is mature enough to start working with it. With Safari now also joining the team it is supported in all
-major platforms
-
-.width-65[![Service Worker Support Chart](images/service-worker-ready.png)]
-
----
 # Promisses (1/2)
 
 Promisses are an integral part of modern languages and are used in all new implemented features. Therefor it's important to
@@ -225,6 +211,22 @@ You can use `onmessage` in the Web Worker as this is defined in the global scope
 in regular scripts. The global scope is also available as `self`.
 
 .width-65[![Debugging Web Workers](images/webworker-debug.png)]
+
+
+---
+# Service Worker
+
+A Service Worker is a special kind of **Web Worker** that in the background has two tasks:
+
+* Network proxy (this is what allows offline usage). Better then AppCache as it is completely controlled by you.
+* Entry point for push notifications
+
+The Service Work spec is still in draft. If you have trouble sleeping, you can the last draft on https://w3c.github.io/ServiceWorker/.
+But the standard is mature enough to start working with it. With Safari now also joining the team it is supported in all
+major platforms
+
+.width-65[![Service Worker Support Chart](images/service-worker-ready.png)]
+
 
 ---
 # CacheStorage API
@@ -322,6 +324,88 @@ not part of the PWA specs.
 Below a typical flow of functions/events is shown for the Push Notification functionality:
 
 .width-100[![Push API flow](images/push-flow.png)]
+
+---
+# Request permission, subscribe
+
+A typical subscription flow would be: 
+
+``` javascript
+
+// Wait for service worker to be ready
+navigator.serviceWorker.ready.then((registration) => {
+
+    // Request permission to show notification
+    Notification.requestPermission()
+        .then((result) => {
+            if (result !== 'granted') {
+                throw Error('No permission')
+            }
+            
+            const options = {
+                userVisibleOnly: true,
+                applicationServerKey: VAPID_PUB_KEY
+            };
+            
+            // Register with Push service
+            registration.pushManager.subscribe(options).then((subscription) => {
+                // Send JSON.stringify(subscription) to backend application
+            });
+        });
+    });
+});
+```
+
+---
+# VAPID
+
+In the example on the previous page a value called `VAPID_PUB_KEY` could be seen. `VAPID` stands for 
+"Voluntary Application Server Identification". 
+
+In the call to the push service a header is added. This header contains a securely hashed JSON object with
+the target audience (the endpoint of the notification service) and a subject (sender) identification. An example JSON 
+document could be:
+
+``` json
+{
+  "aud": "https://push.services.mozilla.com",
+  "exp": 1458679343,
+  "sub": "mailto:example@example.com"
+}
+```   
+The hash is done using a asymmetric (different public and private) key pair. By providing the public key in the subscription
+request only servers that can sign the message with the private key are allowed to push notifications.
+
+In the `examples/push/vapid-keygen` folder a script can be found to create a key pair. 
+
+---
+# Send Push message
+
+Push messages are send to the push service using the "Web Push Protocol". This is a standardized protocol. This means
+a lot of packages are available, including:
+
+* **NodeJS:** https://www.npmjs.com/package/web-push
+* **PHP:** https://packagist.org/packages/minishlink/web-push
+* **Python:** https://pypi.org/project/pywebpush/
+
+NodeJS example:
+
+``` javascript
+const webpush = require('web-push');
+
+webpush.setVapidDetails(
+    'mailto:example@example.com',
+    publicKey,
+    privateKey
+);
+
+const result await webpush.sendNotification(
+    JSON.parse(subscriptionJson), 
+    'This is my great push message'
+);
+```
+
+
 
 ---
 # Design strategies
