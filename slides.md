@@ -870,3 +870,7 @@ on the frontend (e.g. by using JWT)
 much shared code as possible.
 
 A well documented Isomorphic React Demo can be found under `/examples/isomorphic-demo/`.
+
+---
+# QR Code to Github repository
+.width-75[![https://github.com/elzekool/talk-starting-with-progressive-webapps](images/qrcode.svg)]
