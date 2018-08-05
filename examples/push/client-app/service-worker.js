@@ -6,7 +6,7 @@
 
 var preCacheList = [ 'index.html', 'script.js', 'bootstrap.min.css' ].map(function(url) {
     // Add base path to all URL's
-    return '/examples/client-app/' + url
+    return '/examples/push/client-app/' + url
 });
 
 var cacheIdentifier = 'push-client-app';

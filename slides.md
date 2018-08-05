@@ -304,7 +304,8 @@ You are completely free in your choice how and what you cache. Shown was `on ins
 You can control the cache from both the UI and from the Service Worker so you can tailor you caching strategies to
 your needs. Also a common used technique are fallback images when offline. 
 
-* TODO: Improve!
+Google created a NodeJS library that can easily be integrated with Gulp, Grunt and Webpack called `sw-precache`.
+This tool can create a caching Service Worker for you. (https://github.com/GoogleChromeLabs/sw-precache)
 
 ---
 # Push Notifications, intro
@@ -321,7 +322,8 @@ not part of the PWA specs.
 ---
 # Push Notifications, workflow
 
-Below a typical flow of functions/events is shown for the Push Notification functionality:
+Below a typical flow of functions/events is shown for the Push Notification functionality. Visible is that `Push` and `Notification` are
+different API's:
 
 .width-100[![Push API flow](images/push-flow.png)]
 
@@ -336,7 +338,7 @@ A typical subscription flow would be:
 navigator.serviceWorker.ready.then((registration) => {
 
     // Request permission to show notification
-    Notification.requestPermission()
+*   Notification.requestPermission()
         .then((result) => {
             if (result !== 'granted') {
                 throw Error('No permission')
@@ -348,9 +350,10 @@ navigator.serviceWorker.ready.then((registration) => {
             };
             
             // Register with Push service
-            registration.pushManager.subscribe(options).then((subscription) => {
-                // Send JSON.stringify(subscription) to backend application
-            });
+*           registration.pushManager.subscribe(options)
+                .then((subscription) => {
+                    // Send JSON.stringify(subscription) to backend application
+                });
         });
     });
 });
@@ -376,7 +379,7 @@ document could be:
 The hash is done using a asymmetric (different public and private) key pair. By providing the public key in the subscription
 request only servers that can sign the message with the private key are allowed to push notifications.
 
-In the `examples/push/vapid-keygen` folder a script can be found to create a key pair. 
+In the `examples/push/vapid-keygen` folder is a script to create a key pair. 
 
 ---
 # Send Push message
@@ -394,26 +397,393 @@ NodeJS example:
 const webpush = require('web-push');
 
 webpush.setVapidDetails(
-    'mailto:example@example.com',
+*   'mailto:example@example.com',
     publicKey,
     privateKey
 );
 
-const result await webpush.sendNotification(
+const result = await webpush.sendNotification(
     JSON.parse(subscriptionJson), 
     'This is my great push message'
 );
 ```
 
+---
+# Handle Push Message
 
+When a message is send to the push server an `push` event on the Service Worker is triggered. For this your site
+does not need to be open. It's up to the browser to activate your Service Worker.
+
+``` javascript
+// Add an event listener that listens for push messages
+*self.addEventListener('push', function(event) {
+    if (!(self.Notification && self.Notification.permission === 'granted')) {
+        return;
+    }
+
+    var title = 'Push example';
+    var message = event.data.text();
+    event.waitUntil(self.registration.showNotification(title, {
+        body: message
+    }));
+});
+
+// Add an event listener that handles notifications
+*self.addEventListener('notificationclick', function(event) {
+    event.notification.close();
+    event.waitUntil(
+        clients.openWindow('http://localhost:5040/examples/push/client-app/')
+    );
+});
+```
+
+---
+# App Manifest
+
+The `App Manifest` is an important part of a Progressive Web App. It is a descriptive JSON document about your application 
+containing things like: 
+
+* Name
+* Icons
+* Colors
+* Display method (Fullscreen/Normal app like, Browser with/without navigation)
+
+With a correct `App Manifest` your customer is able to add your app to the homescreen making it more likely that
+they will revisit your site.
+
+You link your `App Manifest` with a link tag:
+``` html
+<link rel="manifest" href="/manifest.webmanifest">
+```
+
+---
+# App Manifest Example
+
+Below you see an example of an App Manifest
+
+``` javascript
+{
+  "name": "Demo App",
+  "short_name": "Demo",
+  "start_url": "index.html",
+  "scope": "/",
+  "theme_color": "#3367D6",
+  "display": "standalone",
+  "background_color": "#fff",
+  "description": "A cool demonstration app",
+  "icons": [
+    {
+      "src": "images/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "images/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    // ...
+  }]
+}
+```
+
+---
+# Add to home screen / app drawer
+
+Unfortunately there is no standard for adding you app to the home screen. This is the current state:
+
+* **iOS** There is a [+] Add to Home Screen option button in the Share menu.
+* **Firefox** When served under HTTPS and with a valid App Manifest a House with a plus is added next to the address bar. 
+See [https://hacks.mozilla.org/2017/10/progressive-web-apps-firefox-android/](https://hacks.mozilla.org/2017/10/progressive-web-apps-firefox-android/)
+
+* **Chrome** Until Chrome 67 a popup was automatically shown if the app is served under HTTPS and has a valid App Manifest.
+On newer versions you have to listen for the `beforeinstallprompt` event. Save the event value and call `event.promt()`
+to show the prompt when applicable.
+See [https://developers.google.com/web/fundamentals/app-install-banners/](https://developers.google.com/web/fundamentals/app-install-banners/)
+
+
+---
+# Create React App
+
+React is not needed to create a Progressive Web App. You can use any library like Angular, Vue or even plain
+javascript. I use React in this demo as I think it is the easiest way to start.
+
+Using `create-react-app` (https://github.com/facebook/create-react-app) it is as easy as:
+
+``` bash
+yarn create react-app my-app
+```
+
+This will create:
+* Empty React app.
+* Full Webpack configuration including hot-reload development server.
+* Script to build production ready application including App Manifest and Service Worker.
+
+
+---
+# React Component
+
+React works with `Components`. Each component is responsible for maintaining state and rendering. To ease development
+a special language called `JSX` is created. A component can be created in two ways. `Functional` and `Class` based.
+
+An example of a functional React component:
+
+``` javascript
+import React from 'react';
+
+const DemoComponent = ({ message }) => {
+    return (
+        <div>
+            Hello {message}. This is an example component!
+        </div>
+    );
+};
+
+export default DemoComponent;
+```
+
+This component can be included into other components like:
+`<DemoComponent message="world" />`
+
+
+---
+# React Component State
+
+React components can keep state. To use this you need a Class Component. An example of this is:
+
+``` javascript
+import React, {Component} from 'react';
+
+class DemoComponent extends Component {
+    constructor(props) {
+        super(props);
+*       this.state = { count: 0 };
+    }
+    increaseCount() {
+*       this.setState({
+            count: this.state.count+1
+        });
+    }
+    render() {
+        return (
+            <div>
+                Hello {this.props.message}.
+*               <button onClick={this.increaseCount}>
+                    {this.state.count}x clicked!
+                </button>
+            </div>
+        );
+    }
+};
+```
+
+---
+# Redux Intro
+
+Keeping state in every component is difficult. Libraries as React, Vue, Angular, KnockoutJS help with this as they 
+allow us to focus on the state instead of the DOM representation. But when a lot of components are interconnected it
+gets complicated fast. This is where `Redux` comes into play. It is based on `Event Sourcing` and `CQRS` and is build on three concepts:
+
+#### **Single source of truth** 
+There is only one tree with data (called store)
+
+#### **State is read-only**
+You cannot manipulate the state directly, you apply commands.
+  
+#### **Changes are made with pure functions**
+A function (reducer) is used to calculate the new state from old state + command. Pure means no side-effect. So given the
+same input it always gives the same output. 
+
+---
+# Redux, an example reducer
+
+Below you find an example reducer. A Redux reducer accepts a state and action/command. It will look into the action
+type to determine what todo. The `type` property is a requirement from Redux.
+
+``` javascript
+const initialState = { todos : [] };
+const todoReducer = (state = initialState, action) {
+    switch (action.type) {
+        case 'ADD_TODO':
+            return {
+                ...state,
+                todos: [
+                    ...state.todos,
+                    {
+                      text: action.text,
+                      completed: false
+                    }
+                ]
+            };
+            
+        default
+            return state;
+    }
+};
+
+export default todoReducer;
+```
+
+---
+# Redux usage
+
+Below is a complete example. This also shows the utility `combineReducers`. This is used when you have multiple reducers.
+Each action is dispatched to all registered reducers. 
+
+``` javascript
+import { combineReducers, createStore } from 'redux';
+import todoReducer from './reducers';
+
+const reducer = combineReducers({ todo: todoReducer })
+const store = createStore(reducer)
+
+store.dispatch({ type: 'ADD_TODO', text: 'Example' });
+
+console.log(store.getState());
+ 
+// {
+//    todo: {
+//      todos: [
+//         { text: 'Example', completed: false }
+//      ]
+//    }
+// }
+```
+
+---
+# Redux Middleware
+Redux middleware is executed on every dispatch. Two very common middleware libraries are: 
+
+#### **Redux Logger** 
+Redux logger adds state changes to the browser console making debugging a lot easier.<br />
+.width-50[![Redux Logger](images/redux-logger.png)]
+
+#### **Redux Thunk**
+Redux reducers need to be pure. This is an issue with async calls. With `redux-thunk` you can dispatch a function.
+This function is then executed with `dispatch` and `getState` as arguments. You can call the dispatch function async
+and multiple times. 
+
+---
+# Use Redux with React
+Using Redux with React is very simple using `redux-react`. Below is an example of adding Redux state and dispatch
+functions to a Component:
+
+``` javascript
+import { connect } from 'react-redux';
+import { setVisibilityFilter } from '../actions';
+import TodoList from '../components/TodoList';
+​
+const mapStateToProps = (state, ownProps) => {
+  return {
+    todo : state.todo
+  }
+};
+​
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    addTodo: (text) => {
+      dispatch({ type: 'ADD_TODO', text : text })
+    }
+  }
+};
+​
+const StatefulTodoList = connect(mapStateToProps,mapDispatchToProps)(TodoList);
+
+​export default StatefulTodoList;
+```
+
+---
+# Routing with React Router
+
+For a Progressive Web App it is important that page navigation is direct. This means that page transitions should be
+handled by the frontend script instead of browser navigation (this pattern is called `Single Page Application`). With
+React this can be easily be achieved using `React Router`.
+ 
+The Web based version support two types of routing: `HashRouter` (uses #path) and `BrowserRouter` (users /path). The first
+is used when your server cannot rewrite non existing paths. Both use the `history` browser API.
+
+React Router handles:
+* Rendering different content based on route.
+* Linking to different routes.
+* Redirecting to a different route.
+ 
+---
+# Basic Example with React Router
+
+Below is an example of an app with a Router. Using a router requires to encapsulate all components within a `BrowserRouter`
+of `HashRouter` component. 
+
+``` javascript
+import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import TodoList from './components/TodoList';
+import TodoItem from './components/TodoItem';
+
+const App = () => (
+  <div>
+    <Switch>
+      <Route exact path='/' component={TodoList}/>
+      <Route path='/todo/:id' render={
+        ({match}) => (<TodoItem id={match.params.id} />)} 
+      />
+    </Switch>
+  </div>
+);
+
+
+ReactDOM.render((
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>
+), document.getElementById('root'));
+```
+
+---
+# Redirecting with React Router
+
+Redirecting with React Router is a little different then you might expect. A redirect is triggered by rendering 
+a `Redirect` component.
+
+An example:
+
+``` javascript
+const TodoItem = ({todo, id}) => {
+    if (typeof todo[id] == void 0) {
+        return (<Redirect to="/" />);
+    }
+
+    return (
+        <div>
+            <h1>Todo {id}</h1>
+            <p>{todo.text}</p>
+        </div>
+    );
+};
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    todo : state.todo
+  }
+};
+
+export default connect(mapStateToProps)(TodoItem);
+```
 
 ---
 # Design strategies
 
-* TODO: App shell
-* TODO: Expired, Stale data
-* TODO: Local storage methods: LocalStorage, SessionStorage, IndexedDB -> Permanent
+#### **Display something directly**
+For a Progressive Web App it is imperative to show something on the screen directly. So make sure your App shell is rendered
+before you try to load data from your backend.
 
+#### **Graceful offline data**
+Your Progressive Web App is offline capable but you might need extra backend data. When possible it is advised to cache
+your retrieved data in a local storage (like LocalStorage, IndexedDB, etc.). 
+
+A good way is by storing it with two time stamps 
+(`StaleAfter`, `ExpiredAfter`). When current time is before `StaleAfter` you directly use the cached data. After that but before
+`ExpiredAfter` you try to refresh but on failure use the data with a message. After `ExpiredAfter` the data is to old and an
+error is shown that the user needs to go online.
 
 ---
 # Common pitfalls
@@ -431,9 +801,13 @@ The world is not always a happy place. Things go wrong, this are some things tha
 ---
 # Issue: Caching of Service Worker
 
-* TODO: No cache buster possible (always same URL)
-* TODO: ETag, Cache-Control
-* TODO: Varnish
+Issue with the Service Worker is that it registered URL. It is not possible to use a cache buster (random query string).
+So be careful with caching tags! Fortunately browsers will ignore any cache headers longer then 24 hours. 
+
+An approach we use is by caching the service worker with Varnish. Varnish is a caching server that allows caching 
+assets in different storages like memory. We cache our Service Worker for 24 hours in Varnish. We let Varnish send
+no-cache headers to the browser. This will make the browser download the Service Worker every time. This request is very
+fast with Varnish. On a deployment we forcefully update the cached version in Varnish. 
 
 ---
 # Issue: Old client version
@@ -467,7 +841,32 @@ this may cause Safari to switch your app to the regular browser with that storag
 ---
 # Issue: Javascript rendering + SEO
 
-* TODO: Mixed results between search engines
-* TODO: If used, don't do async calls
-* TODO: No headers (no way to say 404, 403, etc..)
-* TODO: Solution isomorphic app
+Search engines like Google and Bing execute the scripts on your page on indexing but using client side rendering has it's issues:
+
+#### **Unstable timing**
+The timing of when the contents is grabbed on your page is different. There are even examples where part of the page was
+indexed before any script executed an a different part was correctly grabbed after client side rendering.
+
+#### **No headers**
+When you render client side you cannot send any headers (like 401 Gone, 404 Not Found, etc., 301 Permanent Redirect) 
+this will make it harder for the search engine to be up to date with the latest changes.
+
+#### **Worse indexation**
+Altrough the page itself is probably indexed fine, following links on your page is not as stable.
+
+---
+# Javascript rendering + SEO
+
+The solution of indexation and SEO is to create an Isomorphic app. This is an App where the initial page load is rendered
+on the server. Consequent navigation is done client side.
+
+Important things to keep in mind when creating an Isomorphic App:
+
+* **Keep your backend context less**: It's advisable to don't use global state like authentication status in your backend.
+This not only will make your backend easier but also faster as it doesn't require any state locks. Apply authentication state
+on the frontend (e.g. by using JWT)
+
+* **Use as much shared code as possible** Rendering on the backend is sometimes a little different as on the frontend. But use as
+much shared code as possible.
+
+A well documented Isomorphic React Demo can be found under `/examples/isomorphic-demo/`.
