@@ -194,7 +194,7 @@ myWorker.onmessage = (e) => {
 ```
 
 ---
-# Web Worker (1/2)
+# Web Worker (2/2)
 
 
 Sending and receiving messages to/from the UI (from Web Worker):
