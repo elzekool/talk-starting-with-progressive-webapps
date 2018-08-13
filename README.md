@@ -1,5 +1,3 @@
-# NOTE: THIS IS A WIP. First actual presentation is during the following meetup: https://www.meetup.com/nl-NL/CodeByTheCity/events/252590552/
-
 # Starting with Progressive Web Apps (PWA)
 Presentation slides for my presentation about Progressive Web Apps.
 

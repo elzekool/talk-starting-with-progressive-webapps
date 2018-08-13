@@ -48,7 +48,7 @@ doesn't allow assigning a new value. Also `(a,b) => a*b` and `(a,b) => { return 
 ---
 # Progressive Web App, intro
 
-Independent designer `Frances Berriman` and Google engineer `Alex Russell` invented the therm in `2015`. 
+Independent designer `Frances Berriman` and Google engineer `Alex Russell` invented the term in `2015`. 
 The term describes sites/app that take advantage of modern web techniques. So in short it is not a specific technique
 but a set of characteristics that define the progessive web app. 
 
@@ -72,7 +72,7 @@ Characteristics of a Progressive Web App are:
 ---
 # Progressive Web App checklist
 
-From the characteristics a set of rules where created. The most important are: 
+From the characteristics a set of rules were created. The most important are: 
 
 * Site is served over HTTPS
 * Pages are responsive on tablets & mobile devices
@@ -221,7 +221,7 @@ A Service Worker is a special kind of **Web Worker** that in the background has 
 * Network proxy (this is what allows offline usage). Better then AppCache as it is completely controlled by you.
 * Entry point for push notifications
 
-The Service Work spec is still in draft. If you have trouble sleeping, you can the last draft on https://w3c.github.io/ServiceWorker/.
+The Service Work spec is still in draft. If you have trouble sleeping, you can view the last draft on https://w3c.github.io/ServiceWorker/.
 But the standard is mature enough to start working with it. With Safari now also joining the team it is supported in all
 major platforms
 
@@ -301,7 +301,7 @@ self.addEventListener('fetch', => (event) => {
 You are completely free in your choice how and what you cache. Shown was `on install`. But other common options are
 `cache with network fallback`, `network with cache fallback` and `cache with background fetch`. 
 
-You can control the cache from both the UI and from the Service Worker so you can tailor you caching strategies to
+You can control the cache from both the UI and from the Service Worker so you can tailor your caching strategies to
 your needs. Also a common used technique are fallback images when offline. 
 
 Google created a NodeJS library that can easily be integrated with Gulp, Grunt and Webpack called `sw-precache`.
@@ -376,7 +376,7 @@ document could be:
   "sub": "mailto:example@example.com"
 }
 ```   
-The hash is done using a asymmetric (different public and private) key pair. By providing the public key in the subscription
+The hash is done using an asymmetric (different public and private) key pair. By providing the public key in the subscription
 request only servers that can sign the message with the private key are allowed to push notifications.
 
 In the `examples/push/vapid-keygen` folder is a script to create a key pair. 
@@ -411,7 +411,7 @@ const result = await webpush.sendNotification(
 ---
 # Handle Push Message
 
-When a message is send to the push server an `push` event on the Service Worker is triggered. For this your site
+When a message is sent to the push server a `push` event on the Service Worker is triggered. For this your site
 does not need to be open. It's up to the browser to activate your Service Worker.
 
 ``` javascript
@@ -490,7 +490,7 @@ Below you see an example of an App Manifest
 ---
 # Add to home screen / app drawer
 
-Unfortunately there is no standard for adding you app to the home screen. This is the current state:
+Unfortunately there is no standard for adding your app to the home screen. This is the current state:
 
 * **iOS** There is a [+] Add to Home Screen option button in the Share menu.
 * **Firefox** When served under HTTPS and with a valid App Manifest a House with a plus is added next to the address bar. 
@@ -782,13 +782,13 @@ your retrieved data in a local storage (like LocalStorage, IndexedDB, etc.).
 
 A good way is by storing it with two time stamps 
 (`StaleAfter`, `ExpiredAfter`). When current time is before `StaleAfter` you directly use the cached data. After that but before
-`ExpiredAfter` you try to refresh but on failure use the data with a message. After `ExpiredAfter` the data is to old and an
+`ExpiredAfter` you try to refresh but on failure use the data with a message. After `ExpiredAfter` the data is too old and an
 error is shown that the user needs to go online.
 
 ---
 # Common pitfalls
 
-The world is not always a happy place. Things go wrong, this are some things that can bite you:
+The world is not always a happy place. Things go wrong, these are some things that can bite you:
 
 * Caching of Service Worker
 
@@ -845,14 +845,14 @@ Search engines like Google and Bing execute the scripts on your page on indexing
 
 #### **Unstable timing**
 The timing of when the contents is grabbed on your page is different. There are even examples where part of the page was
-indexed before any script executed an a different part was correctly grabbed after client side rendering.
+indexed before any script executed and a different part was correctly grabbed after client side rendering.
 
 #### **No headers**
 When you render client side you cannot send any headers (like 401 Gone, 404 Not Found, etc., 301 Permanent Redirect) 
 this will make it harder for the search engine to be up to date with the latest changes.
 
 #### **Worse indexation**
-Altrough the page itself is probably indexed fine, following links on your page is not as stable.
+Although the page itself is probably indexed fine, following links on your page is not as stable.
 
 ---
 # Javascript rendering + SEO
